@@ -14,6 +14,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 //Clase de persistencia mapeado a una tabla, cada variable a un campo de la tabla
@@ -33,18 +34,19 @@ public class Cliente implements Serializable{
 	
 	@NotEmpty (message = "no puede estar vacio, mensaje desde Spring")//depedencia Spring validation - formulario
 	private String apellido;
-	@Column(nullable = false, unique = true)
+	@Column(nullable = false, unique = false)
 	@NotEmpty (message = "no puede estar vacio, mensaje desde Spring")//depedencia Spring validation - formulario
 	@Email (message = "no es una dirección válida de correo, mensaje desde spring")//depedencia Spring validation - formulario
 	private String email;
 	
+	@NotNull(message="no puede estar vacio")
 	@Column(name="create_at")
 	@Temporal(TemporalType.DATE) //Tipo equivalente en la BD
 	private Date createAt;
-	@PrePersist
+	/*@PrePersist //antes de que se inserte en la BD, asigna en la BD
 	public void prePersist() {
 		createAt = new Date();
-	}
+	}*/
 	//GETTERS AND SETTERS
 	public Long getId() {
 		return id;
