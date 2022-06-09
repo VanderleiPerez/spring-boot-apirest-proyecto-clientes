@@ -43,9 +43,6 @@ public class Cliente implements Serializable{
 	@Column(name="create_at")
 	@Temporal(TemporalType.DATE) //Tipo equivalente en la BD
 	private Date createAt;
-	
-	private String foto;
-	
 	/*@PrePersist //antes de que se inserte en la BD, asigna en la BD
 	public void prePersist() {
 		createAt = new Date();
@@ -81,17 +78,6 @@ public class Cliente implements Serializable{
 	public void setCreateAt(Date createAt) {
 		this.createAt = createAt;
 	}
-	
-	public String getFoto() {
-		return foto;
-	}
-	public void setFoto(String foto) {
-		this.foto = foto;
-	}
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-
 	//ATRIBUTO ESTÁTICO CUANDO SE IMPLEMENTA SERIALIZABLE
 	private static final long serialVersionUID = 1L;
 	
