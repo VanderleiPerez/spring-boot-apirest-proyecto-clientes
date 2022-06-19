@@ -5,9 +5,12 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -16,6 +19,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 //Clase de persistencia mapeado a una tabla, cada variable a un campo de la tabla
 @Entity
@@ -45,6 +50,13 @@ public class Cliente implements Serializable{
 	private Date createAt;
 	
 	private String foto;
+	
+	//Mapeo con cliente - MUCHOS A 1
+	@ManyToOne(fetch = FetchType.LAZY) //Tipo: carga perezosa JPA
+	@JoinColumn(name="region_id") // Llave foraneo JPA
+	@JsonIgnoreProperties({"hibernateLazyInitializer","handler"}) //Propio de Hibernate, se usa porque se implementó FetchType.LAZY
+	@NotNull(message = "La región no puede ser vacia")
+	private Region region; 
 	
 	/*@PrePersist //antes de que se inserte en la BD, asigna en la BD
 	public void prePersist() {
@@ -87,6 +99,13 @@ public class Cliente implements Serializable{
 	}
 	public void setFoto(String foto) {
 		this.foto = foto;
+	}
+	
+	public Region getRegion() {
+		return region;
+	}
+	public void setRegion(Region region) {
+		this.region = region;
 	}
 	public static long getSerialversionuid() {
 		return serialVersionUID;

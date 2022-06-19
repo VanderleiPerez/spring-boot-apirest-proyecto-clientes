@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.empresa.springboot.apirest.models.dao.IClienteDao;
 import com.empresa.springboot.apirest.models.entity.Cliente;
+import com.empresa.springboot.apirest.models.entity.Region;
 
 //Decorar la clase como componente de servicios. Además se almacena en el contenedor de Spring
 @Service
@@ -52,6 +53,14 @@ public class ClienteServiceImp implements IClienteService{
 	@Transactional
 	public void delete(Long id) {
 		clienteDao.deleteById(id);
+	}
+	
+	/* ---------------------- LISTAR REGIONES ----------------------*/ 
+	@Override
+	@Transactional(readOnly = true)
+	public List<Region> findAllRegiones() {
+		// TODO Auto-generated method stub
+		return clienteDao.findAllRegiones();
 	}
 
 

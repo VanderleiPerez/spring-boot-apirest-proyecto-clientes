@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.empresa.springboot.apirest.models.entity.Cliente;
+import com.empresa.springboot.apirest.models.entity.Region;
 import com.empresa.springboot.apirest.models.services.IClienteService;
 import com.empresa.springboot.apirest.models.services.UploadFileServiceImp;
 
@@ -57,13 +58,12 @@ public class ClienteRestController {
 	// Inyección de dependencia - Listado de clientes desde @Service
 	@Autowired
 	public IClienteService clienteService;
-<<<<<<< HEAD
+
 	// Inyección de dependencia - 
 	@Autowired
 	public UploadFileServiceImp uploadService;
 	
-=======
->>>>>>> 27f33b698982f293133d1ca0cc878971bcc76656
+
 	//Logger: importar de interface slf4j | LoggerFactory: importar de la class
 	private final Logger log = LoggerFactory.getLogger(ClienteRestController.class);
 	
@@ -186,6 +186,7 @@ public class ClienteRestController {
 			clienteActual.setNombre(cliente.getNombre());
 			clienteActual.setEmail(cliente.getEmail());
 			clienteActual.setCreateAt(cliente.getCreateAt());
+			clienteActual.setRegion(cliente.getRegion());
 			// save hace un INSERT si el id es null, pero si tiene valor el id hace MERGE
 			clienteUpdate = clienteService.save(clienteActual);
 		} catch (DataAccessException e) {
@@ -214,11 +215,11 @@ public class ClienteRestController {
 			Cliente cliente = clienteService.findById(id);
 			//Al actualizar foto, borrar foto anterior (VALIDACIÓN)
 			String nombreFotoAnterior = cliente.getFoto();
-<<<<<<< HEAD
+
 		
 			//ELIMINAR FOTO - UploadService
 			uploadService.eliminar(nombreFotoAnterior);
-=======
+
 			if(nombreFotoAnterior !=null && nombreFotoAnterior.length()>0) {
 				//Obtener la ruta y el nombre de la imagen
 				Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
@@ -229,8 +230,7 @@ public class ClienteRestController {
 				}
 			}
 			
->>>>>>> 27f33b698982f293133d1ca0cc878971bcc76656
-			
+
 			clienteService.delete(id);
 			
 		} catch (DataAccessException e) {
@@ -250,7 +250,7 @@ public class ClienteRestController {
 		Cliente cliente =clienteService.findById(id);
 		//Validar imagen
 		if(!archivo.isEmpty()) { //si es distinto, copiar la imagen
-<<<<<<< HEAD
+
 			
 			//COPÍAR FOTO - UploadService
 			String nombreArchivo=null;
@@ -266,34 +266,7 @@ public class ClienteRestController {
 			String nombreFotoAnterior = cliente.getFoto();
 			//ELIMINAR FOTO - UploadService
 			uploadService.eliminar(nombreFotoAnterior);
-=======
-			String nombreArchivo = UUID.randomUUID().toString()+"_"+archivo.getOriginalFilename().replace(" ", ""); //nombre original del archivo
-			Path rutaArchivo = Paths.get("uploads").resolve(nombreArchivo).toAbsolutePath();
-			//LOG
-			log.info(rutaArchivo.toString());
-			//copiar el archivo subido al servidor a la ruta seleccionada
-			try {
-				Files.copy(archivo.getInputStream(), rutaArchivo);
-			} catch (IOException e) {
-				//Mensaje STATUS  si ocurre un error al subir la imagen
-				response.put("mensaje","Error al subir la imagen del cliente "+nombreArchivo);
-				response.put("error", e.getMessage().concat(": ").concat(e.getCause().getMessage()));
-				return new ResponseEntity<Map<String, Object>>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 
-			}
-			//Al actualizar foto, borrar foto anterior
-			String nombreFotoAnterior = cliente.getFoto();
-			if(nombreFotoAnterior !=null && nombreFotoAnterior.length()>0) {
-				//Obtener la ruta y el nombre de la imagen
-				Path rutaFotoAnterior = Paths.get("uploads").resolve(nombreFotoAnterior).toAbsolutePath();
-				//convertir archivo a un tipo File
-				File archivoFotoAnterior = rutaFotoAnterior.toFile();
-				if(archivoFotoAnterior.exists() && archivoFotoAnterior.canRead()) {
-					archivoFotoAnterior.delete();
-				}
-			}
->>>>>>> 27f33b698982f293133d1ca0cc878971bcc76656
-			
 			//Si todo sale bien, guardar 
 			cliente.setFoto(nombreArchivo);
 			clienteService.save(cliente);
@@ -309,8 +282,7 @@ public class ClienteRestController {
 	@GetMapping("/uploads/img/{nombreFoto:.+}") //Expresión regular para incluir . y extensión (jpg,png,etc)
 	//Resource importar de springframework.core.io
 	public ResponseEntity<Resource> verFoto(@PathVariable String nombreFoto){
-<<<<<<< HEAD
-		
+
 		//CARGAR FOTO - UploadService
 		Resource recurso = null;
 		try {
@@ -320,24 +292,7 @@ public class ClienteRestController {
 			e.printStackTrace();
 		}
 		
-=======
-		//Ruta 
-		Path rutaArchivo = Paths.get("uploads").resolve(nombreFoto).toAbsolutePath();
-		log.info(rutaArchivo.toString());
 
-		//Creación del recurso
-		Resource recurso = null;
-		try {
-			recurso = new UrlResource(rutaArchivo.toUri());
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-		//si existe y se puede leer
-		if(!recurso.exists() && !recurso.isReadable()) {
-			throw new RuntimeException("Error, no se pudo cargar la imagen " + nombreFoto);
-		}
->>>>>>> 27f33b698982f293133d1ca0cc878971bcc76656
 		//Pasar cabecera de la respuesta, para que la imagen se pueda descargar
 		HttpHeaders cabecera = new HttpHeaders();
 		//cabecera.add("Content-Disposition", nombreFoto);
@@ -345,5 +300,11 @@ public class ClienteRestController {
 		cabecera.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+ recurso.getFilename()+"\"");
 		//Si todo sale bien, se guarda el recurso en la respuesta
 		return new ResponseEntity<Resource>(recurso,cabecera, HttpStatus.OK);
+	}
+	
+	/* ---------------------- LISTAR REGIONES ---------------------- */
+	@GetMapping("/clientes/regiones")
+	public List<Region> listarRegiones(){
+		return clienteService.findAllRegiones();
 	}
 }
