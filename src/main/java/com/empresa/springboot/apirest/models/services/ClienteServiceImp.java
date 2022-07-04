@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.empresa.springboot.apirest.models.dao.IClienteDao;
+import com.empresa.springboot.apirest.models.dao.IFacturaDao;
+import com.empresa.springboot.apirest.models.dao.IProductoDao;
 import com.empresa.springboot.apirest.models.entity.Cliente;
+import com.empresa.springboot.apirest.models.entity.Factura;
+import com.empresa.springboot.apirest.models.entity.Producto;
 import com.empresa.springboot.apirest.models.entity.Region;
 
 //Decorar la clase como componente de servicios. Además se almacena en el contenedor de Spring
@@ -19,6 +23,12 @@ public class ClienteServiceImp implements IClienteService{
 	//Inyecciónd de dependencia (Guarda en el contenedor de Spring)
 	@Autowired
 	private IClienteDao clienteDao;
+	
+	@Autowired
+	private IFacturaDao facturaDao;
+	
+	@Autowired
+	private IProductoDao productoDao;
 
 	/* ---------------------- LISTAR CLIENTE ----------------------*/ 
 	@Override
@@ -61,6 +71,36 @@ public class ClienteServiceImp implements IClienteService{
 	public List<Region> findAllRegiones() {
 		// TODO Auto-generated method stub
 		return clienteDao.findAllRegiones();
+	}
+	
+	/* ---------------------- BUSCAR FACTURAS ----------------------*/
+	@Override
+	@Transactional(readOnly = true)
+	public Factura findFacturaById(Long id) {
+		return facturaDao.findById(id).orElse(null); //retorna Optional (si no encuentra factura, returna null)
+	}
+	
+	/* ---------------------- GUARDAR FACTURAS ----------------------*/
+	@Override
+	@Transactional
+	public Factura saveFactura(Factura factura) {
+		return facturaDao.save(factura);
+	}
+	
+	/* ---------------------- ELIMINAR FACTURAS ----------------------*/
+	@Override
+	@Transactional
+	public void deleteFacturaById(Long id) {
+		facturaDao.deleteById(id);
+		
+		
+	/* ---------------------- BUSCAR PRODUCTO ----------------------*/
+
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public List<Producto> findProductoByNombre(String term) {
+		return productoDao.findByNombre(term);
 	}
 
 

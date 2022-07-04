@@ -6,6 +6,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import com.empresa.springboot.apirest.models.entity.Cliente;
+import com.empresa.springboot.apirest.models.entity.Factura;
+import com.empresa.springboot.apirest.models.entity.Producto;
 import com.empresa.springboot.apirest.models.entity.Region;
 
 public interface IClienteService {
@@ -24,4 +26,18 @@ public interface IClienteService {
 	/* ---------------------- LISTAR REGIONES ----------------------*/ 
 	public List<Region> findAllRegiones();
 	
+	
+	/* ---------------------- BUSCAR FACTURAS ----------------------*/ //Service : DaoManager
+	public Factura findFacturaById(Long id);
+	
+	/* ---------------------- GUARDAR FACTURAS ----------------------*/
+	public Factura saveFactura(Factura factura);
+	
+	/* ---------------------- ELIMINAR FACTURAS ----------------------*/
+	public void deleteFacturaById(Long id);
+
+	
+	/* ---------------------- BUSCAR PRODUCTO ----------------------*/
+	public List<Producto> findProductoByNombre(String term);
+
 }

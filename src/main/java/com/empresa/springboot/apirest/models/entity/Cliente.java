@@ -1,8 +1,11 @@
 package com.empresa.springboot.apirest.models.entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -11,7 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.PrePersist;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -58,6 +61,15 @@ public class Cliente implements Serializable{
 	@NotNull(message = "La región no puede ser vacia")
 	private Region region; 
 	
+	@JsonIgnoreProperties(value={"cliente","hibernateLazyInitializer","handler"},allowSetters = true) //Ignorar relación inversa | evitar loop | allowSetters: evitar recursión
+	@OneToMany(fetch = FetchType.LAZY, mappedBy ="cliente",cascade = CascadeType.ALL) // mappedBy: relación en ambos sentidos | cascade: al eliminar un cliente, elimina facturas hijas - si se guarda un cliente con factura, primero se inserta el cliente, luego hijos | BD: Integridad referencial
+	private List<Factura> facturas;
+	
+	
+	//Constructor - Asignar facturas
+	public Cliente() {
+		this.facturas = new ArrayList<>();
+	}
 	/*@PrePersist //antes de que se inserte en la BD, asigna en la BD
 	public void prePersist() {
 		createAt = new Date();
@@ -110,6 +122,17 @@ public class Cliente implements Serializable{
 	public static long getSerialversionuid() {
 		return serialVersionUID;
 	}
+
+	
+	
+	public List<Factura> getFacturas() {
+		return facturas;
+	}
+	public void setFacturas(List<Factura> facturas) {
+		this.facturas = facturas;
+	}
+
+
 
 	//ATRIBUTO ESTÁTICO CUANDO SE IMPLEMENTA SERIALIZABLE
 	private static final long serialVersionUID = 1L;

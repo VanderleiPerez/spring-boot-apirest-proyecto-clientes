@@ -4,23 +4,20 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 
-import java.nio.file.Files;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,8 +25,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,7 +62,7 @@ public class ClienteRestController {
 	
 
 	//Logger: importar de interface slf4j | LoggerFactory: importar de la class
-	private final Logger log = LoggerFactory.getLogger(ClienteRestController.class);
+	//private final Logger log = LoggerFactory.getLogger(ClienteRestController.class);
 	
 	
 	/* ---------------------- LISTAR CLIENTE ---------------------- */
@@ -82,8 +79,9 @@ public class ClienteRestController {
 	}
 
 	/* ---------------------- BUSCAR CLIENTE ---------------------- */
+	@Secured({"ROLE_ADMIN","ROLE_USER"}) 
 	@GetMapping("/clientes/{id}")
-	@ResponseStatus(HttpStatus.OK) // status 200
+	//@ResponseStatus(HttpStatus.OK) // status 200
 	// ResponseEntity: Clase para manejar error de SPRING
 	// -- ?: Tipo genérico porque retornará un Objeto Cliente o un String como
 	// mensaje
@@ -111,6 +109,7 @@ public class ClienteRestController {
 	}
 
 	/* ---------------------- CREAR CLIENTE ---------------------- */
+	@Secured({"ROLE_ADMIN"})
 	@PostMapping("/clientes")
 	// @ResponseStatus(HttpStatus.CREATED) // status 201: creado
 	// Dependencia validation @valid | BindingResult:Mensaje de error
@@ -154,6 +153,7 @@ public class ClienteRestController {
 	}
 
 	/* ---------------------- ACTUALIZAR CLIENTE ---------------------- */
+	@Secured({"ROLE_ADMIN"})
 	@PutMapping("/clientes/{id}")
 	// @ResponseStatus(HttpStatus.CREATED) // status 201: creado
 	public ResponseEntity<?> update(@Valid @RequestBody Cliente cliente, BindingResult result, @PathVariable Long id) {
@@ -202,7 +202,7 @@ public class ClienteRestController {
 
 		/* ---------------------- ELIMINAR CLIENTE ---------------------- */
 	}
-
+	@Secured({"ROLE_ADMIN"})
 	@DeleteMapping("/clientes/{id}")
 	// @ResponseStatus(HttpStatus.NO_CONTENT) // status 204
 	public ResponseEntity<?> delete(@PathVariable Long id) {
@@ -243,6 +243,7 @@ public class ClienteRestController {
 	}
 	
 		/* ---------------------- SUBIDA DE IMAGEN ---------------------- */
+	@Secured({"ROLE_ADMIN","ROLE_USER"})
 	@PostMapping("/clientes/upload")
 	public ResponseEntity<?> upload(@RequestParam("archivo") MultipartFile archivo, @RequestParam("id") Long id){
 		Map<String, Object> response = new HashMap<>();
@@ -303,6 +304,7 @@ public class ClienteRestController {
 	}
 	
 	/* ---------------------- LISTAR REGIONES ---------------------- */
+	
 	@GetMapping("/clientes/regiones")
 	public List<Region> listarRegiones(){
 		return clienteService.findAllRegiones();
